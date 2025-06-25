@@ -1,0 +1,45 @@
+---
+interface Props {
+    id: string;
+    title: string;
+    kudos: number;
+    bookmarks: number;
+    comments: number;
+    chapters: string;
+
+}
+const { id, title, kudos, bookmarks, comments, chapters } = Astro.props;
+---
+<li class="analytics-card" id={`work${id}`}>
+    <h2>{title}</h2>
+    <ul>
+        <li>Kudos: {kudos}</li>
+        <li>Bookmarks: {bookmarks}</li>
+        <li>Comments: {comments}</li>
+        <li>Chapter: {chapters}</li>
+    </ul>
+    <a href={'/'+id}>View Analytics</a>
+</li>
+<style>
+    ul {
+        padding-left: 0;
+        display: flex;
+        list-style-type: none;
+        gap: 1.5ch;
+        font-size: 0.95rem;
+        color: #121212;
+        flex-wrap: wrap;
+    }
+    .analytics-card {
+        background-color: #fff;
+        border-color: 1px solid var(--primary);
+        padding: 1em 1.5em;
+        display: flex;
+        flex-flow: column;
+        gap: 1ch;
+        border-radius: 4px;
+        > * {
+            margin: 0;
+        }
+    }
+</style>
