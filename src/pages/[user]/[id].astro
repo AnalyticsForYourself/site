@@ -1,0 +1,148 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import { getEntry, getCollection } from "astro:content";
+// import DebugJSON from "../../components/DebugJSON.astro";
+
+export const getStaticPaths = (async () => {
+    const collection = await getCollection('analytics');
+
+    return collection.map(({ id }) => ({
+        params: { id }
+    }))
+}) satisfies GetStaticPaths;
+
+const { id } = Astro.params;
+const entry = await getEntry('analytics', id);
+
+const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short' });
+
+function parseData(dataArr: any[]) {
+    const potentialData: Record<string, (number|string)[]> = {
+        labels: []
+    };
+    for (const obj of dataArr) {
+        for (let [key, value] of Object.entries<number>(obj)) {
+            if (typeof value === 'string') continue;
+            if (key !== 'timestamp') {
+                if (!(key in potentialData)) {
+                    potentialData[key] = [value as number];
+                } else {
+                    potentialData[key].push(value as number);
+                }
+            } else {
+                potentialData.labels.push(formatter.format(new Date(value)));
+            }
+        }
+    }
+    return potentialData;
+}
+const parsedData = parseData(entry?.data);
+const data = JSON.stringify(parsedData || {});
+---
+<Layout>
+    <h1>Analytics for {entry?.data[0].title}</h1>
+    {parsedData.kudos.length < 5 && <h2>There aren't a lot of entries for this work, you might want to come back in a couple of days!</h2>}
+    <canvas id="ctx"></canvas>
+    <fieldset>
+        <legend>Controls</legend>
+        <div class="fieldset">
+            <div class="row">
+                {Object.keys(parsedData).map((key) => !['labels','chapters','complete'].includes(key) &&
+                    // @ts-ignore
+                    <button command={'--change:'+key} commandfor="ctx">{key[0].toUpperCase() + key.slice(1)}</button>
+                )}
+            </div>
+            <div class="row">
+                <label for="limit">Number of Entries: </label>
+                <select id="limit">
+                    <option>1</option>
+                    <option selected>5</option>
+                    <option>14</option>
+                    <option>30</option>
+                    <option>60</option>
+                    <option>150</option>
+                    <option>365</option>
+                </select>
+            </div>
+        </div>
+    </fieldset>
+</Layout>
+<style>
+    .row {
+        display: flex;
+        gap: 1ch;
+        flex-wrap: wrap;
+    }
+    legend {
+        font-size: 1.25rem;
+    }
+    .fieldset {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        row-gap: 2ch;
+    }
+    button {
+        background-color: var(--primary);
+        border: unset;
+        padding: 1ch 1.5ch;
+        font-size: 1.15rem;
+        color: white;
+        font-weight: 600;
+        border-radius: 4px;
+        border: 3px solid var(--primary);
+    }
+    button[data-active] {
+        background-color: white;
+        color: #121314;
+    }
+</style>
+<script type="application/json" set:html={data}></script>
+<script>
+    import {Chart, registerables} from 'chart.js';
+    Chart.register(...registerables);
+    const ctx = document.getElementById('ctx')! as HTMLCanvasElement;
+    const data =JSON.parse(document.querySelector('[type="application/json"]')?.innerHTML || '{}')
+    const limit = document.getElementById('limit')! as HTMLSelectElement;
+    let currentType = 'kudos';
+    
+    const limitData = (data: number[]) => {
+        const numLimit = parseInt(limit.value, 10);
+        return data.slice(-numLimit);
+    }
+
+    const chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Kudos',
+                data: limitData(data.kudos)
+            }]
+        }
+    })
+
+
+    // @ts-ignore
+    ctx.addEventListener('command', ({ command, source }) => {
+        const type = command.split(':')[1];
+        currentType = type;
+        chart.data.datasets = [
+            { label: source.textContent, data: limitData(data[type]) }
+        ]
+        chart.update();
+        document.querySelectorAll('button').forEach(el => el.removeAttribute('data-active'));
+        source.dataset.active = true;
+
+    })
+    limit.addEventListener('change', () => {
+        chart.data.labels = limitData(data.labels);
+        chart.data.datasets = [
+            { label: document.querySelector('[command*=":'+currentType+'"]')!.textContent!, data: limitData(data[currentType]) }
+        ]
+        console.log(chart.data.datasets[0].data);
+        chart.update();
+    })
+</script>
