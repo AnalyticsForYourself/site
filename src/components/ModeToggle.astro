@@ -1,0 +1,21 @@
+---
+const { value: theme } = Astro.cookies.get("theme")!;
+---
+
+<button type="button" data-id="ModeToggle">
+    Toggle Mode <span class="visually-hidden">{theme[0].toUpperCase() + theme.slice(1)}</span>
+</button>
+<script>
+    import jar from "../lib/jar.js";
+
+    document.addEventListener("click", ({ target }) => {
+        const trigger = (target as HTMLElement).closest(
+            '[data-id="ModeToggle"]',
+        );
+
+        if (trigger) {
+            jar.set("theme", jar.get("theme") === "light" ? "dark" : "light");
+            document.documentElement.dataset.theme = jar.get("theme");
+        }
+    });
+</script>
