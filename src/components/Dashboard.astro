@@ -1,0 +1,19 @@
+---
+import AnalyticsCard from '../components/AnalyticsCard.astro';
+import { getCollection } from 'astro:content';
+
+const analytics = await getCollection('analytics');
+---
+<h1>Your AO3 Analytics dashboard</h1>
+<ul>
+    {analytics.map(({ id, data }) => <AnalyticsCard {...data.at(-1)} />)}
+</ul>
+<style>
+	ul {
+		list-style-type: none;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 3ch;
+	}
+</style>
