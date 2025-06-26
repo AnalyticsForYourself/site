@@ -10,9 +10,10 @@ export interface AnalyticsCardsProps {
 }
 interface Props extends AnalyticsCardsProps {}
 const { id, userid, title, kudos, bookmarks, comments, chapters } = Astro.props;
+const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
 ---
 <li class="analytics-card" id={`work${id}`}>
-    <h2>{title}</h2>
+    <h2>{truncatedTitle.length === title.length ? title : `${truncatedTitle}...`}</h2>
     <ul>
         <li>Kudos: {kudos}</li>
         <li>Bookmarks: {bookmarks}</li>
@@ -32,6 +33,7 @@ const { id, userid, title, kudos, bookmarks, comments, chapters } = Astro.props;
         flex-wrap: wrap;
     }
     .analytics-card {
+        container-type: inline-size;
         background-color: #fff;
         border-color: 1px solid var(--primary);
         padding: 1em 1.5em;
@@ -41,6 +43,9 @@ const { id, userid, title, kudos, bookmarks, comments, chapters } = Astro.props;
         border-radius: 4px;
         > * {
             margin: 0;
+        }
+        h2 {
+            font-size: clamp(1.2rem, 1rem + 3cqi, 2rem);
         }
     }
 </style>
