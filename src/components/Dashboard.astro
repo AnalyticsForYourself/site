@@ -1,6 +1,6 @@
 ---
 import AnalyticsCard from '../components/AnalyticsCard.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import type { AnalyticsCardsProps } from './AnalyticsCard.astro';
 export const prerender = true;
 interface Props {
@@ -8,15 +8,16 @@ interface Props {
 }
 const analytics = await getCollection('analytics');
 const userRelatedAnalytics = analytics.filter(({ id, data }) => {
-    return data.userid === Astro.props.user
+    return data.user === Astro.props.user
 })
-
-function getLastRecord(id:string, record: Record<string, string|number[]>): AnalyticsCardsProps {
+function getLastRecord(id:string, title: string, record: Record<string, string|number[]>): AnalyticsCardsProps {
+    
     const lastRecord: Record<string, string|number> = {
-        title: record.title as string,
+        title,
         id,
         userid: Astro.props.user
-    }
+    };
+    
     const entries = Object.entries(record);
     for (const [key, value] of entries) {
         if (typeof value === 'string') continue;
@@ -26,11 +27,16 @@ function getLastRecord(id:string, record: Record<string, string|number[]>): Anal
     // @ts-ignore
     return lastRecord;
 }
-console.log({ analytics, userRelatedAnalytics });
+const relatedUserNameEntry = await getEntry('users', ''+Astro.props.user);
+if (!relatedUserNameEntry?.data.user) return Astro.redirect('/');
+const userName = relatedUserNameEntry.data.user;
+const getPossessive = (name: string) => name.split('').at(-1) === 's' ? "'" : "'s"
 ---
-<h1>Your AO3 Analytics dashboard</h1>
+<h1>{userName}{getPossessive(userName)} Analytics Dashboard</h1>
 <ul>
-    {analytics.map(({ id, data }) => <AnalyticsCard {...getLastRecord(id, data.records)} />)}
+    {userRelatedAnalytics.map(({ id, data }) => {
+        return <AnalyticsCard {...getLastRecord(id, data.title, data.records)} />
+    })}
 </ul>
 <style>
 	ul {
@@ -39,5 +45,6 @@ console.log({ analytics, userRelatedAnalytics });
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: 3ch;
+        padding-block-end: 5vh;
 	}
 </style>
