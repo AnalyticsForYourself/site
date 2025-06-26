@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import Layout from "../../../layouts/Layout.astro";
 import { getEntry, getCollection } from "astro:content";
 // import DebugJSON from "../../components/DebugJSON.astro";
-export const prerender = true;
+export const prerender = false;
 
 export const getStaticPaths = (async () => {
     const collection = await getCollection('analytics');
@@ -28,7 +28,7 @@ function parseData(dataArr: Record<string, string|number[]>) {
     const potentialData: Record<string, (number|string)[]> = {
         labels: []
     };
-    
+
     for (const [key, value] of Object.entries(dataArr.records)) {
         if (key === 'timestamps') potentialData.labels.push(...(value as number[]).map(n => formatter.format(new Date(n))));
         else {
