@@ -1,14 +1,15 @@
 ---
-interface Props {
+export interface AnalyticsCardsProps {
     id: string;
+    userid: number;
     title: string;
     kudos: number;
     bookmarks: number;
     comments: number;
     chapters: string;
-
 }
-const { id, title, kudos, bookmarks, comments, chapters } = Astro.props;
+interface Props extends AnalyticsCardsProps {}
+const { id, userid, title, kudos, bookmarks, comments, chapters } = Astro.props;
 ---
 <li class="analytics-card" id={`work${id}`}>
     <h2>{title}</h2>
@@ -18,7 +19,7 @@ const { id, title, kudos, bookmarks, comments, chapters } = Astro.props;
         <li>Comments: {comments}</li>
         <li>Chapter: {chapters}</li>
     </ul>
-    <a href={'/'+id}>View Analytics</a>
+    <a href={`/dashboard/${userid}/${id}`}>View Analytics</a>
 </li>
 <style>
     ul {
