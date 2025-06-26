@@ -4,12 +4,19 @@ import Layout from "../../../layouts/Layout.astro";
 import { getEntry, getCollection } from "astro:content";
 // import DebugJSON from "../../components/DebugJSON.astro";
 export const prerender = true;
+
 export const getStaticPaths = (async () => {
     const collection = await getCollection('analytics');
-
-    return collection.map(({ id }) => ({
-        params: { id }
-    }))
+    const users = await getCollection('users');
+    const mappedPaths = users.map(({ id, data }) => {
+        
+        const relatedWorks = collection.filter(({ data: { user } }) => parseInt(user, 10) === parseInt(id, 10));
+        const userid = id;
+        return relatedWorks.map(({ id }) => {
+            return { params: { user: userid, id } }
+        })
+    }).flat()
+    return mappedPaths;
 }) satisfies GetStaticPaths;
 
 const { id } = Astro.params;
@@ -17,38 +24,32 @@ const entry = await getEntry('analytics', id);
 
 const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short' });
 
-function parseData(dataArr: any[]) {
+function parseData(dataArr: Record<string, string|number[]>) {
     const potentialData: Record<string, (number|string)[]> = {
         labels: []
     };
-    for (const obj of dataArr) {
-        for (let [key, value] of Object.entries<number>(obj)) {
-            if (typeof value === 'string') continue;
-            if (key !== 'timestamp') {
-                if (!(key in potentialData)) {
-                    potentialData[key] = [value as number];
-                } else {
-                    potentialData[key].push(value as number);
-                }
-            } else {
-                potentialData.labels.push(formatter.format(new Date(value)));
-            }
+    
+    for (const [key, value] of Object.entries(dataArr.records)) {
+        if (key === 'timestamps') potentialData.labels.push(...(value as number[]).map(n => formatter.format(new Date(n))));
+        else {
+            potentialData[key] = (potentialData[key] || []).concat(value);
         }
     }
     return potentialData;
 }
 const parsedData = parseData(entry?.data);
 const data = JSON.stringify(parsedData || {});
+console.log(entry?.data);
 ---
 <Layout>
-    <h1>Analytics for {entry?.data[0].title}</h1>
-    {parsedData.kudos.length < 5 && <h2>There aren't a lot of entries for this work, you might want to come back in a couple of days!</h2>}
+    <h1>Analytics for {entry?.data.title}</h1>
+    {parsedData.kudos?.length < 5 && <h2>There aren't a lot of entries for this work, you might want to come back in a couple of days!</h2>}
     <canvas id="ctx"></canvas>
     <fieldset>
         <legend>Controls</legend>
         <div class="fieldset">
-            <div class="row">
-                {Object.keys(parsedData).map((key) => !['labels','chapters','complete'].includes(key) &&
+            <div class="row gap-3">
+                {Object.keys(parsedData).map((key) => !['title','fandom','category','rating','warnings','labels','chapters','complete'].includes(key) &&
                     // @ts-ignore
                     <button command={'--change:'+key} commandfor="ctx">{key[0].toUpperCase() + key.slice(1)}</button>
                 )}
@@ -69,11 +70,6 @@ const data = JSON.stringify(parsedData || {});
     </fieldset>
 </Layout>
 <style>
-    .row {
-        display: flex;
-        gap: 1ch;
-        flex-wrap: wrap;
-    }
     legend {
         font-size: 1.25rem;
     }
@@ -83,20 +79,23 @@ const data = JSON.stringify(parsedData || {});
         align-items: center;
         flex-wrap: wrap;
         row-gap: 2ch;
+        padding: 3ch;
     }
     button {
-        background-color: var(--primary);
+        background-color: var(--primary-300);
         border: unset;
         padding: 1ch 1.5ch;
         font-size: 1.15rem;
         color: white;
         font-weight: 600;
         border-radius: 4px;
-        border: 3px solid var(--primary);
+        border: 3px solid var(--primary-400);
+        flex-basis: auto;
+        max-width: fit-content;
     }
     button[data-active] {
-        background-color: white;
-        color: #121314;
+        background-color: var(--primary-900);
+        color: var(--primary-50);
     }
 </style>
 <script type="application/json" set:html={data}></script>
