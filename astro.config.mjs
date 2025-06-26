@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import clerk from '@clerk/astro';
 
 import netlify from '@astrojs/netlify';
@@ -8,5 +8,18 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
     integrations: [clerk()],
     output: 'server',
-    adapter: netlify()
+    adapter: netlify(),
+    experimental: {
+        fonts: [
+            {
+                name: 'Young Serif', 
+                cssVariable: '--young-serif', 
+                provider: "local",
+                fallbacks: ['serif'],
+                variants: [
+                    { weight: 500, style: 'normal', src: ['./src/fonts/youngserif/youngserif-regular.woff'], display: 'swap' }
+                ]
+            }
+        ]
+    }
 });
