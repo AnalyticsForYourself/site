@@ -2,6 +2,7 @@
 import { SignedIn, SignedOut } from '@clerk/astro/components';
 import Layout from '../layouts/Layout.astro';
 import Explainer from '../components/Explainer.astro'
+import Hero from '../components/Hero.astro';
 
 export const prerender = false;
 ---
@@ -10,6 +11,7 @@ export const prerender = false;
 		<!--Dashboard /-->
 	</SignedIn>
 	<SignedOut>
+		<Hero />
 		<Explainer />
 	</SignedOut>
 </Layout>
