@@ -2,22 +2,27 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../assets/index.css';
 import ModeToggle from '../components/ModeToggle.astro';
-import { SignInButton } from '@clerk/astro/components';
+import Font from 'astro/components/Font.astro';
+// import { SignInButton } from '@clerk/astro/components';
 const theme = Astro.cookies.get('theme') || Astro.cookies.set('theme', 'light') || { value: 'light' };
+const useDotBackground = Astro.url.pathname.indexOf('/dashboard') === -1
 ---
 <!doctype html>
-<html lang="en" data-theme={theme.value}>
+<html lang="en" data-theme={theme.value} class:list={[useDotBackground && 'dot-bg']}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="https://fav.farm/🔍" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Analytics For Yourself</title>
+		<Font cssVariable='--young-serif' preload />
 	</head>
 	<body>
 		<nav class="navbar py-3">
 			<div class="container-lg">
-				<h1 class="text-secondary fs-4">AnalyticsForYourself</h1>
+				<h1 class="text-secondary fs-4">
+					<a href="/" class="text-reset text-decoration-none">AnalyticsForYourself</a>
+				</h1>
 				<div>
 					<ModeToggle />
 					<!--SignInButton /-->
@@ -27,6 +32,43 @@ const theme = Astro.cookies.get('theme') || Astro.cookies.set('theme', 'light') 
 		<main class="container-lg">
 			<slot />
 		</main>
+		<aside class="cta-form">
+			<form class="container-lg">
+				<div class="row justify-content-center">
+					<div class="col-md-10 col-11">
+						<div class="cta-controls">
+							<h2>Need more convincing?</h2>
+							<p>Reach out to use using the form below, we'd love to show you what we're making!</p>
+							<div class="hstack align-items-stretch">
+								<div class="input-group">
+									<div class="form-floating">
+										<input type="email" class="form-control" id="email" name="email" placeholder=" " />
+										<label for="email">Email</label>
+									</div>
+									<button class="btn">Reach Out</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</aside>
+		<footer>
+			<div class="container-lg">
+				<div class="row py-5 justify-content-between align-items-center">
+					<div class="col-auto">
+						<h2 class="fs-4"><a href="/" class="text-reset text-decoration-none">AnalyticsForYourself</a></h2>
+					</div>
+					<div class="col-auto">
+						<ul class="hstack list-style-none nav">
+							<li class="nav-item">
+								<a class="nav-link" href="https://github.com/AnalyticsForYourself">Github</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</footer>
 	</body>
 </html>
 
@@ -36,10 +78,15 @@ const theme = Astro.cookies.get('theme') || Astro.cookies.set('theme', 'light') 
 		margin: 0;
 		width: 100%;
 		height: 100%;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 		background-color: var(--background-50);
+		font-family: var(--young-serif);
 	}
 	main {
 		margin: 0 auto;
+		padding-bottom: 10vh;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
 	}
 </style>
