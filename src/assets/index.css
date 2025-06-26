@@ -123,13 +123,24 @@
 
 }
 
-
-
 html {
     background-color: var(--background-50);
     color: var(--text-950);
+    font-family: var(--young-serif);
 }
-
+.home-page body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(var(--text-200) 1px, transparent 0);
+    background-size: 17.5px 17.5px;
+    background-position: -19px -19px;
+}
+.home-page body > * {
+    position: relative;
+    z-index: 1;
+}
 .text-secondary {
     color: var(--secondary-900) !important;
 }
@@ -141,5 +152,10 @@ button {
     border-radius: 5px;
     font-weight: bold;;
     color: var(--accent-800);
-
+}
+p {
+    font-family: var(--bs-font-sans-serif);
+    strong {
+        font-family: var(--young-serif);
+    }
 }
