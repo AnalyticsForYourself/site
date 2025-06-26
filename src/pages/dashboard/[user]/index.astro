@@ -1,6 +1,9 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
+import Dashboard from "../../../components/Dashboard.astro";
+const { user } = Astro.params;
+if (!user) return Astro.redirect('/');
 ---
 <Layout>
-
+    <Dashboard user={parseInt(user, 10)} />
 </Layout>
