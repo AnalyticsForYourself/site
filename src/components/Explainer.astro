@@ -1,50 +1,62 @@
 ---
-
+// <p><strong>What is this?</strong> AnalyticsForYourself is a small indie project designed to help give fan fic authors a better idea of how people interact with their works.</p>
 ---
 <section class="row gy-3">
     <div class="col-12">
         <div class="info">
-            <h2>Get a better understanding of how your fics are received on AO3!</h2>
-            <p><strong>What is this?</strong> AnalyticsForYourself is a small indie project designed to help give fan fic authors a better idea of how people interact with their works.</p>
+            <h2 class="h1">Understand your readers better!</h2>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="info">
-            <h3>The analytics AO3 deserves, <small class="text-secondary">But shouldn't have to provide.</small></h3>
-            <p>The <abbr title="Analytics For Yourself">AFY</abbr> team believes that AO3 should be an archive first. This means keeping costs minimal, teams small, and focusing on doing what they do best, preserving fan works for future generations.</p>
+            <h3>The analytics AO3 deserves, but shouldn't have to provide.</h3>
+            <p>The <abbr title="Analytics For Yourself">AFY</abbr> team believes that AO3 should be an archive first. That means focusing on preserving fan works, not refining how they track views.</p>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="info">
             <h3>Minimal impact, maximum outcome</h3>
-            <p>Most analytics services are greedy, taking as much information as they can. We don't. When you sign up for AFY, we look through your list of works and save the statistics that are visible. We don't look again for another 24 hours.</p>
+            <p>Most analytics services are greedy, taking as much information as they can. We don't. When you sign up for AFY, we only save what is relevant to your writing.</p>
         </div>
     </div>
     <div class="col-lg-4">
         <div class="info">
             <h3>Privacy minded, for you and your readers</h3>
-            <p>We only track statistics relevant to your work. That's how many people have left a kudo, a comment, a bookmark, or looked at your work. We never know the "who" of any of those statistics. Only the "what".</p>
+            <p>We only track statistics relevant to your work. That's how many people have left a kudo, a comment, a bookmark, or looked at your work.</p>
         </div>
     </div>
     <div>
-        <hr>
+        <hr />
     </div>
     <div class="col-12">
-        <h3 class="display-2">Finally see the big picture of what is happening with your writing!</h3>
+        <h3 class="display-4">Finally see the big picture of what is happening with your writing!</h3>
         <canvas id="ctx"></canvas>
-        <small class="text-secondary">Placeholder data, doesn't reflect expected growth of a fic after signing up for AFY</small>
+        <p><small class="text-secondary">Placeholder data, doesn't reflect expected growth of a fic after signing up for AFY</small></p>
+    </div>
+    <div>
+        <hr />
+    </div>
+    <div class="col-12">
+        <h2 class="display-4">Pricing that makes sense</h2>
+        <p>We do the utmost possible to limit the resources we use, this means storing only the data we need and serving energy and storage efficent web pages. That makes pricing a breeze. For just $PRICING a month, we can cover all of a user's costs, and anything left over is donated directly to OTW.</p>
     </div>
 </section>
 <style>
+    h2 {
+        text-wrap: pretty;
+    }
     section {
         .info {
             padding: 1em;
-            background-color: var(--primary-200);
             color: var(--text-900);
-            border: 1px solid var(--primary-300);
-            border-radius: 10px;
+            display: flex;
+            flex-flow: column;
+            gap: 1ch;
             :is(h2,h3,h4,h5) {
                 color: var(--text-950);
+            }
+            h3 {
+                font-size: 1.1rem;
             }
         }
     }
