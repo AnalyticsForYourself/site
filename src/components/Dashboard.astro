@@ -1,12 +1,36 @@
 ---
 import AnalyticsCard from '../components/AnalyticsCard.astro';
 import { getCollection } from 'astro:content';
-
+import type { AnalyticsCardsProps } from './AnalyticsCard.astro';
+export const prerender = true;
+interface Props {
+    user: number;
+}
 const analytics = await getCollection('analytics');
+const userRelatedAnalytics = analytics.filter(({ id, data }) => {
+    return data.userid === Astro.props.user
+})
+
+function getLastRecord(id:string, record: Record<string, string|number[]>): AnalyticsCardsProps {
+    const lastRecord: Record<string, string|number> = {
+        title: record.title as string,
+        id,
+        userid: Astro.props.user
+    }
+    const entries = Object.entries(record);
+    for (const [key, value] of entries) {
+        if (typeof value === 'string') continue;
+        lastRecord[key] = value.at(-1)!;
+    }
+
+    // @ts-ignore
+    return lastRecord;
+}
+console.log({ analytics, userRelatedAnalytics });
 ---
 <h1>Your AO3 Analytics dashboard</h1>
 <ul>
-    {analytics.map(({ id, data }) => <AnalyticsCard {...data.at(-1)} />)}
+    {analytics.map(({ id, data }) => <AnalyticsCard {...getLastRecord(id, data.records)} />)}
 </ul>
 <style>
 	ul {
