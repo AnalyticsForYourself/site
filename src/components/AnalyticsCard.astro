@@ -15,20 +15,23 @@ export interface AnalyticsCardsProps {
 interface Props extends AnalyticsCardsProps {}
 const { id, userid, title, kudos, bookmarks, comments, hits, allRecords } = Astro.props;
 const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
+const formatter = Intl.NumberFormat('en-US');
 ---
-<work-card >
+<work-card>
     <li class="analytics-card" id={`work${id}`}>
         <h2>{truncatedTitle.length === title.length ? title : `${truncatedTitle}...`}</h2>
         <ul class="stat-controls">
-            <li><span>Kudos:</span> <button class="btn btn-text active" data-spark='kudos' type="button">{kudos}</button></li>
-            <li><span>Bookmarks:</span> <button class="btn btn-text" data-spark='bookmarks' type="button">{bookmarks}</button></li>
-            <li><span>Comments:</span> <button class="btn btn-text" data-spark='comments' type="button">{comments}</button></li>
-            <li><span>Hits:</span> <button class="btn btn-text" data-spark='hits' type="button">{hits}</button></li>
+            <li><span>Hits:</span> <button class="btn btn-text active" data-spark='hits' type="button">{formatter.format(hits)}</button></li>
+            <li><span>Kudos:</span> <button class="btn btn-text " data-spark='kudos' type="button">{formatter.format(kudos)}</button></li>
+            <li><span>Comments:</span> <button class="btn btn-text" data-spark='comments' type="button">{formatter.format(comments)}</button></li>
+            <li><span>Bookmarks:</span> <button class="btn btn-text" data-spark='bookmarks' type="button">{formatter.format(bookmarks)}</button></li>
         </ul>
-        <Sparkline class="spark-kudos active" points={allRecords.kudos} />
-        <Sparkline class="spark-bookmarks" points={allRecords.bookmarks} />
-        <Sparkline class="spark-comments" points={allRecords.comments} />
-        <Sparkline class="spark-hits" points={allRecords.hits} />
+        <div>
+            <Sparkline class="spark-hits active" points={allRecords.hits} />
+            <Sparkline class="spark-kudos" points={allRecords.kudos} />
+            <Sparkline class="spark-comments" points={allRecords.comments} />
+            <Sparkline class="spark-bookmarks" points={allRecords.bookmarks} />
+        </div>
         <a href={`/dashboard/${userid}/${id}`}><span>View Analytics</span> <Icon name="eva:arrow-forward-fill" /></a>
     </li>
 </work-card>
@@ -53,12 +56,22 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
 <style>
     work-card {
         position: relative;
+        li {
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            a {
+                justify-self: end;
+            }
+        }
     }
     ul {
         padding-left: 0;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         list-style-type: none;
-        gap: 1.5ch;
+        column-gap: 1.5ch;
         font-size: 0.95rem;
         color: #121212;
         flex-wrap: wrap;
@@ -94,6 +107,7 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
     .btn {
         position: relative;
         z-index: 10;
+        padding: 0.5ch;
     }
     .btn:hover {
         background-color: var(--background-100);
