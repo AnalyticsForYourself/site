@@ -14,13 +14,6 @@ export interface AnalyticsCardsProps {
 interface Props extends AnalyticsCardsProps {}
 const { id, userid, title, kudos, bookmarks, comments, hits, allRecords } = Astro.props;
 const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
-
-const sRecords = Object.entries(allRecords).reduce((acc, [key, numArr]) => {
-    acc[key] = JSON.stringify(numArr);
-    return acc;
-}, {} as Record<string, string>)
-// @TODO add a sparkline graph to show the change in views per day
-// @TODO Convert sparkline to using this https://mitjafelicijan.github.io/sparklines/ instead of all this JS
 ---
 <work-card >
     <li class="analytics-card" id={`work${id}`}>
