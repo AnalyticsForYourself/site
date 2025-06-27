@@ -1,21 +1,45 @@
 ---
+import {Icon} from 'astro-icon/components';
 const { value: theme } = Astro.cookies.get("theme")!;
 ---
-
-<button type="button" data-id="ModeToggle">
-    Toggle Mode <span class="visually-hidden">{theme[0].toUpperCase() + theme.slice(1)}</span>
-</button>
+<theme-toggle current-theme={theme} id="themeToggle">
+    {/* @ts-ignore: Add commands polyfill eventually */}
+    <button class="btn" command="toggle" commandfor="themeToggle">
+        <Icon class="light" name="eva:sun-outline" />
+        <Icon class="dark" name="eva:moon-outline" />
+    </button>
+</theme-toggle>
 <script>
-    import jar from "../lib/jar.js";
-
-    document.addEventListener("click", ({ target }) => {
-        const trigger = (target as HTMLElement).closest(
-            '[data-id="ModeToggle"]',
-        );
-
-        if (trigger) {
-            jar.set("theme", jar.get("theme") === "light" ? "dark" : "light");
-            document.documentElement.dataset.theme = jar.get("theme");
+    customElements.define('theme-toggle', class extends HTMLElement {
+        set currentTheme(str: string) {
+            this.setAttribute('current-theme', str);
+            document.cookie = `theme=${str};`;
+            document.documentElement.dataset.theme = str;
         }
-    });
+        get currentTheme() {
+            return this.getAttribute('current-theme')!;
+        }
+        connectedCallback() {
+            this.addEventListener('click', () => {
+                this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+            }, true)
+        }
+    })
 </script>
+<style>
+    theme-toggle {
+        display: block;
+    }
+    theme-toggle button {
+        font-size: 1.5rem;
+        display: grid;
+        place-content: center;
+        aspect-ratio: 1;
+    }
+    [current-theme="dark"] .dark {
+        display: none;
+    }
+    [current-theme="light"] .light {
+        display: none;
+    }
+</style>
