@@ -1,26 +1,30 @@
 ---
-import type { GetStaticPaths } from "astro";
+import type { GetStaticPaths, GetStaticPathsResult } from "astro";
 import Layout from "../../../layouts/Layout.astro";
 import { getEntry, getCollection } from "astro:content";
-// import DebugJSON from "../../components/DebugJSON.astro";
+import type { DataEntryMap } from "astro:content";
+
 export const prerender = false;
 
 export const getStaticPaths = (async () => {
-    const collection = await getCollection('analytics');
     const users = await getCollection('users');
-    const mappedPaths = users.map(({ id, data }) => {
-        
-        const relatedWorks = collection.filter(({ data: { user } }) => parseInt(user, 10) === parseInt(id, 10));
+    const mappedPaths:GetStaticPathsResult = [];
+
+    for (const { id } of users) {
         const userid = id;
-        return relatedWorks.map(({ id }) => {
-            return { params: { user: userid, id } }
+        const collection = await getCollection(userid as keyof DataEntryMap);
+        collection.forEach(({ id }) => {
+            mappedPaths.push({
+                params: { user: userid, id }
+            })
         })
-    }).flat()
+    }
+
     return mappedPaths;
 }) satisfies GetStaticPaths;
 
-const { id } = Astro.params;
-const entry = await getEntry('analytics', id);
+const { user, id } = Astro.params as { user: string, id: string };
+const entry = await getEntry(user as keyof DataEntryMap, id);
 
 const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short' });
 
@@ -39,9 +43,9 @@ function parseData(dataArr: Record<string, string|number[]>) {
 }
 const parsedData = parseData(entry?.data);
 const data = JSON.stringify(parsedData || {});
-console.log(entry?.data);
 ---
 <Layout>
+    <a href={`/dashboard/${user}`}>Return to overview</a>
     <h1>Analytics for {entry?.data.title}</h1>
     {parsedData.kudos?.length < 5 && <h2>There aren't a lot of entries for this work, you might want to come back in a couple of days!</h2>}
     <canvas id="ctx"></canvas>
@@ -56,7 +60,7 @@ console.log(entry?.data);
             </div>
             <div class="row">
                 <label for="limit">Number of Entries: </label>
-                <select id="limit">
+                <select id="limit" class="form-control">
                     <option>1</option>
                     <option selected>5</option>
                     <option>14</option>

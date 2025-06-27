@@ -1,14 +1,12 @@
 ---
 import AnalyticsCard from '../components/AnalyticsCard.astro';
-import { getCollection, getEntry } from 'astro:content';
+import { getEntry } from 'astro:content';
 import type { AnalyticsCardsProps } from './AnalyticsCard.astro';
 interface Props {
-    user: number;
+    user: string;
+    // @TODO Give this a proper type
+    collection: any;
 }
-const analytics = await getCollection('analytics');
-const userRelatedAnalytics = analytics.filter(({ id, data }) => {
-    return data.user === Astro.props.user
-})
 function getLastRecord(id:string, title: string, record: Record<string, string|number[]>): AnalyticsCardsProps {
     
     const lastRecord: Record<string, string|number> = {
@@ -26,14 +24,14 @@ function getLastRecord(id:string, title: string, record: Record<string, string|n
     // @ts-ignore
     return lastRecord;
 }
-const relatedUserNameEntry = await getEntry('users', ''+Astro.props.user);
+const relatedUserNameEntry = await getEntry('users', Astro.props.user);
 if (!relatedUserNameEntry?.data.user) return Astro.redirect('/');
 const userName = relatedUserNameEntry.data.user;
 const getPossessive = (name: string) => name.split('').at(-1) === 's' ? "'" : "'s"
 ---
 <h1>{userName}{getPossessive(userName)} Analytics Dashboard</h1>
 <ul>
-    {userRelatedAnalytics.map(({ id, data }) => {
+    {Astro.props.collection.map(({ id, data }: { id: string; data: any }) => {
         return <AnalyticsCard {...getLastRecord(id, data.title, data.records)}  allRecords={data.records} />
     })}
 </ul>

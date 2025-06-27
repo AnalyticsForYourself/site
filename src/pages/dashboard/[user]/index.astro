@@ -1,10 +1,18 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import Dashboard from "../../../components/Dashboard.astro";
+import { getCollection } from 'astro:content';
+import type { DataEntryMap } from "astro:content";
 const { user } = Astro.params;
 if (!user) return Astro.redirect('/');
 export const prerender = false;
+const collection = await getCollection(''+user as keyof DataEntryMap);
+// @TODO: Add sorting features
+// - sort by high|low of each category
+// - sort by last updated
+// - sort by publish date
+// - sort by something else
 ---
 <Layout>
-    <Dashboard user={parseInt(user, 10)} />
+    <Dashboard user={user} collection={collection} />
 </Layout>
