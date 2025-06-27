@@ -26,7 +26,7 @@ const formatter = Intl.NumberFormat('en-US');
             <li><span>Comments:</span> <button class="btn btn-text" data-spark='comments' type="button">{formatter.format(comments)}</button></li>
             <li><span>Bookmarks:</span> <button class="btn btn-text" data-spark='bookmarks' type="button">{formatter.format(bookmarks)}</button></li>
         </ul>
-        <div>
+        <div class="sparklines">
             <Sparkline class="spark-hits active" points={allRecords.hits} />
             <Sparkline class="spark-kudos" points={allRecords.kudos} />
             <Sparkline class="spark-comments" points={allRecords.comments} />
@@ -60,34 +60,36 @@ const formatter = Intl.NumberFormat('en-US');
             height: 100%;
             display: grid;
             grid-template-columns: 1fr;
-            grid-template-rows: 4lh;
-            grid-template-rows: 10ch;
+            grid-template-rows: max-content;
             a {
                 align-self: end;
             }
         }
     }
-    ul {
+    .stat-controls {
         padding-left: 0;
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         list-style-type: none;
-        column-gap: 1.5ch;
-        font-size: 0.95rem;
+        column-gap: 0.5rem;
+        row-gap: 0.125rem;
+        font-size: 1rem;
         color: #121212;
         flex-wrap: wrap;
+        position: relative;
+        z-index: 10;
     }
     .stat-controls li {
         display: flex;
         align-items: center;
-        gap: 0.5ch;
+        gap: 0.5rem;
         font-family: var(--bs-font-sans-serif);
     }
     a {
         font-family: var(--bs-font-sans-serif);
         font-weight: 600;
         display: flex;
-        column-gap: 0.5ch;
+        column-gap: 0.5rem;
         text-decoration: none;
         align-items: center;
         transition: all 0.25s ease 0.15s;
@@ -100,7 +102,10 @@ const formatter = Intl.NumberFormat('en-US');
         z-index: 1;
     }
     a:hover {
-        column-gap: 1ch;
+        column-gap: 0.25rem;
+    }
+    .sparklines {
+        align-self: end;
     }
     .spark-line-container:not(.active) {
         display: none;
@@ -108,7 +113,7 @@ const formatter = Intl.NumberFormat('en-US');
     .btn {
         position: relative;
         z-index: 10;
-        padding: 0.5ch;
+        padding: 0.25rem 0.5rem;
     }
     .btn:hover {
         background-color: var(--background-100);

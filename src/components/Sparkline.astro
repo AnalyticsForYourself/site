@@ -9,19 +9,25 @@ interface Props extends HTMLAttributes<'div'> {
     strokeWidth?: number;
     color?: string;
 }
+
 const { points, width = 200, height = 30, gap = 5, strokeWidth = 2, color = 'var(--accent-200)', ...props } = Astro.props;
 const maxValue = Math.max(...points);
 const spacing = width / points.length - 1;
 const coords = points.map((point:number, idx:number) => {
+
+    if (maxValue === 0 || idx === 0) return `0,0`;
     const maxHeight = (point / maxValue) * height;
     const x = idx * spacing;
     const y = height - maxHeight;
+    console.log({ x, y, height, maxHeight, width, spacing, maxValue, point, idx });
     return `${x},${y}`;
 });
 props.class += ' spark-line-container';
 ---
 <div {...props}>
-    <svg class="spark-line" viewBox={`0 0 ${width} ${height}`}>
-        <polyline points={coords.join(' ')} fill="none" stroke-width={strokeWidth} stroke={color}></polyline>
-    </svg>
+    {maxValue === 0 ? 
+        <p><small>Not enough data</small></p> : 
+        <svg class="spark-line" width={width} height={height}>
+            <polyline points={coords.join(' ')} fill="none" stroke-width={strokeWidth} stroke={color}></polyline>
+        </svg>}
 </div>
