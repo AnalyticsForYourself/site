@@ -35,7 +35,7 @@ const getPossessive = (name: string) => name.split('').at(-1) === 's' ? "'" : "'
 <h1>{userName}{getPossessive(userName)} Analytics Dashboard</h1>
 <ul>
     {userRelatedAnalytics.map(({ id, data }) => {
-        return <AnalyticsCard {...getLastRecord(id, data.title, data.records)} />
+        return <AnalyticsCard {...getLastRecord(id, data.title, data.records)}  allRecords={data.records} />
     })}
 </ul>
 <style>

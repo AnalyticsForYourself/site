@@ -7,21 +7,110 @@ export interface AnalyticsCardsProps {
     bookmarks: number;
     comments: number;
     chapters: string;
+    hits: number;
+    allRecords: Record<string, number[]>;
 }
 interface Props extends AnalyticsCardsProps {}
-const { id, userid, title, kudos, bookmarks, comments, chapters } = Astro.props;
+const { id, userid, title, kudos, bookmarks, comments, hits, allRecords } = Astro.props;
 const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
+function getLast5AsString(record: number[]) {
+    const recordItems = record.slice(-6)
+    let sparkLineData = [];
+    for (let i = 0;i < recordItems.length - 1;i += 1) {
+        sparkLineData.push(recordItems[i + 1] - recordItems[i]);
+    }
+    return JSON.stringify(sparkLineData);
+}
+
+const last5Records = ['hits','comments','kudos','bookmarks'].reduce((acc, curr) => {
+    acc[curr] = getLast5AsString(allRecords[curr]);
+    return acc;
+}, {} as Record<string, string>)
+// @TODO add a sparkline graph to show the change in views per day
 ---
-<li class="analytics-card" id={`work${id}`}>
-    <h2>{truncatedTitle.length === title.length ? title : `${truncatedTitle}...`}</h2>
-    <ul>
-        <li>Kudos: {kudos}</li>
-        <li>Bookmarks: {bookmarks}</li>
-        <li>Comments: {comments}</li>
-        <li>Chapter: {chapters}</li>
-    </ul>
-    <a href={`/dashboard/${userid}/${id}`}>View Analytics</a>
-</li>
+<work-card {...last5Records}>
+    <li class="analytics-card" id={`work${id}`}>
+        <h2>{truncatedTitle.length === title.length ? title : `${truncatedTitle}...`}</h2>
+        <ul>
+            <li>Kudos: <button class="btn btn-text" data-prev-record='kudos' type="button">{kudos}</button></li>
+            <li>Bookmarks: <button class="btn btn-text" data-prev-record='bookmarks' type="button">{bookmarks}</button></li>
+            <li>Comments: <button class="btn btn-text" data-prev-record='comments' type="button">{comments}</button></li>
+            <li>Hits: <button class="btn btn-text" data-prev-record='hits' type="button">{hits}</button></li>
+        </ul>
+        <canvas></canvas>
+        <a href={`/dashboard/${userid}/${id}`}>View Analytics</a>
+    </li>
+</work-card>
+<script>
+    import { Chart, registerables } from 'chart.js';
+    Chart.register(...registerables);
+    const P = JSON.parse;
+    customElements.define('work-card', class extends HTMLElement {
+        get hits() {
+            return P(this.getAttribute('hits')!);
+        }
+        get kudos() {
+            return P(this.getAttribute('kudos')!)
+        }
+        get comments() {
+            return P(this.getAttribute('comments')!);
+        }
+        get bookmarks() {
+            return P(this.getAttribute('bookmarks')!);
+        }
+        connectedCallback() {
+            const chart = new Chart(this.querySelector<HTMLCanvasElement>('canvas')!, {
+                type: 'line',
+                data: {
+                    labels: [0,1,2,3,4],
+                    datasets: [
+                        {
+                            data: this.kudos,
+                            yAxisID: 'y',
+                            xAxisID: 'x'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: false,
+                    elements: {
+                        line: {
+                            borderColor: 'var(--accent-200)',
+                            borderWidth: 1
+                        },
+                        point: {
+                            radius: 0,
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            display: false
+                        },
+                        x: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            this.addEventListener('click', ({ target }) => {
+                const btn = (target as HTMLElement).closest('button');
+                if (!btn) return;
+                
+                chart.data.datasets[0].data = this[btn.dataset.prevRecord as keyof this]
+                
+                chart.update();
+            })
+        }
+    });
+</script>
 <style>
     ul {
         padding-left: 0;
