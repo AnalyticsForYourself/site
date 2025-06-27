@@ -246,6 +246,10 @@ p {
         font-family: var(--young-serif);
     }
 }
+.btn {
+    --bs-btn-font-family: var(--bs-font-sans-serif);
+    --bs-btn-font-weight: 600;
+}
 h1,h2,h3,h4,h5,
 .h1,.h2,.h3,.h4,.h5 {
     font-family: var(--young-serif)
