@@ -1,4 +1,5 @@
 ---
+import Sparkline from './Sparkline.astro';
 export interface AnalyticsCardsProps {
     id: string;
     userid: number;
@@ -30,10 +31,10 @@ const sRecords = Object.entries(allRecords).reduce((acc, [key, numArr]) => {
             <li><span>Comments:</span> <button class="btn btn-text" data-spark='comments' type="button">{comments}</button></li>
             <li><span>Hits:</span> <button class="btn btn-text" data-spark='hits' type="button">{hits}</button></li>
         </ul>
-        <spark-lines class="spark-kudos active" points={sRecords.kudos}></spark-lines>
-        <spark-lines class="spark-bookmarks" points={sRecords.bookmarks}></spark-lines>
-        <spark-lines class="spark-comments" points={sRecords.comments}></spark-lines>
-        <spark-lines class="spark-hits" points={sRecords.hits}></spark-lines>
+        <Sparkline class="spark-kudos active" points={allRecords.kudos} />
+        <Sparkline class="spark-bookmarks" points={allRecords.bookmarks} />
+        <Sparkline class="spark-comments" points={allRecords.comments} />
+        <Sparkline class="spark-hits" points={allRecords.hits} />
         <a href={`/dashboard/${userid}/${id}`}>View Analytics</a>
     </li>
 </work-card>
@@ -48,7 +49,7 @@ const sRecords = Object.entries(allRecords).reduce((acc, [key, numArr]) => {
                 if (!nextSpark) return;
                 const nextSparkType = nextSpark.dataset.spark!;
 
-                this.querySelectorAll('spark-lines').forEach(el => {
+                this.querySelectorAll('.spark-line-container').forEach(el => {
                     el.classList.toggle('active', el.className.indexOf(nextSparkType) !== -1)
                 });
                 this.querySelectorAll('.btn').forEach(el => el.classList.toggle('active', el.getAttribute('data-spark') === nextSparkType));
@@ -73,7 +74,7 @@ const sRecords = Object.entries(allRecords).reduce((acc, [key, numArr]) => {
         gap: 0.5ch;
         font-family: var(--bs-font-sans-serif);
     }
-    spark-lines:not(.active) {
+    .spark-line-container:not(.active) {
         display: none;
     }
     .btn.active {
