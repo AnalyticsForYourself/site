@@ -1,4 +1,5 @@
 ---
+import IconTitle from './IconTitle.astro';
 // <p><strong>What is this?</strong> AnalyticsForYourself is a small indie project designed to help give fan fic authors a better idea of how people interact with their works.</p>
 ---
 <section class="row gy-3">
@@ -7,21 +8,21 @@
             <h2 class="h1">Understand your readers better!</h2>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-md-4">
         <div class="info">
-            <h3>The analytics AO3 deserves, but shouldn't have to provide.</h3>
+            <IconTitle name="eva:heart-outline" level={3} class="title">Analytics AO3 deserves</IconTitle>
             <p>The <abbr title="Analytics For Yourself">AFY</abbr> team believes that AO3 should be an archive first. That means focusing on preserving fan works, not refining how they track views.</p>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-md-4">
         <div class="info">
-            <h3>Minimal impact, maximum outcome</h3>
+            <IconTitle name="eva:trending-up-fill" level={3} class="title">Minimal impact</IconTitle>
             <p>Most analytics services are greedy, taking as much information as they can. We don't. When you sign up for AFY, we only save what is relevant to your writing.</p>
         </div>
     </div>
-    <div class="col-lg-4">
+    <div class="col-md-4">
         <div class="info">
-            <h3>Privacy minded, for you and your readers</h3>
+            <IconTitle name="eva:lock-outline" level={3} class="title">Privacy focused</IconTitle>
             <p>We only track statistics relevant to your work. That's how many people have left a kudo, a comment, a bookmark, or looked at your work.</p>
         </div>
     </div>
@@ -47,6 +48,7 @@
     }
     section {
         .info {
+            container-type: inline-size;
             padding: 1em;
             color: var(--text-900);
             display: flex;
@@ -55,8 +57,8 @@
             :is(h2,h3,h4,h5) {
                 color: var(--text-950);
             }
-            h3 {
-                font-size: 1.1rem;
+            .title p {
+                font-size: clamp(1.1rem, 1rem + 3cqi, 1.5rem);
             }
         }
     }
