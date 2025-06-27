@@ -4,9 +4,11 @@ import clerk from '@clerk/astro';
 
 import netlify from '@astrojs/netlify';
 
+import icon from 'astro-icon';
+
 // https://astro.build/config
 export default defineConfig({
-    integrations: [clerk()],
+    integrations: [clerk(), icon()],
     output: 'server',
     adapter: netlify(),
     experimental: {
