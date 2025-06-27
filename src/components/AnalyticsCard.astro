@@ -39,8 +39,6 @@ const sRecords = Object.entries(allRecords).reduce((acc, [key, numArr]) => {
     </li>
 </work-card>
 <script>
-    import {SparkLines} from '../lib/sparklines';
-    SparkLines.define();
     customElements.define('work-card', class extends HTMLElement {
         connectedCallback() {
             this.addEventListener('click', (event) => {
