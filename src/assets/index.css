@@ -120,25 +120,47 @@
   --accent-800: oklch(85.88% 0.074 231.62);
   --accent-900: oklch(92.70% 0.037 231.92);
   --accent-950: oklch(96.44% 0.019 230.69);
-
 }
-
+:root {
+    --bs-heading-color: var(--text-900);
+    --bs-body-color: var(--text-800);
+    --rounded: calc(Infinity * 1px);
+}
 html {
     background-color: var(--background-50);
     color: var(--text-950);
     font-family: var(--young-serif);
 }
+body {
+    transition: all 0.25s ease;
+    transition-property: background-color, color;
+}
 ul[class] {
     list-style-type: none;
 }
+@property --dot-bg-color {
+    syntax: '<color>';
+    inherits: false;
+}
+@property --dot-size {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 1px;
+}
 .dot-bg body::after {
+    --dot-bg-color: var(--accent-200);
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
-    background-image: radial-gradient(var(--accent-200) 1px, transparent 0);
-    background-size: 17.5px 17.5px;
-    background-position: -19px -19px;
+    background-image: radial-gradient(var(--dot-bg-color) var(--dot-size), transparent 0);
+    background-size: 20px 20px;
+    background-position: -20px -20px;
+    transition: all 0.25s ease;
+    transition-property: --dot-bg-color, --dot-size;
+}
+.dot-bg[data-theme="light"] body::after {
+    --dot-size: 1.5px;
 }
 .dot-bg body > * {
     position: relative;
@@ -152,6 +174,11 @@ footer {
 
 .cta-form {
     position: relative;
+    --background: var(--background-800);
+    --color: var(--text-100);
+    --input-bg: var(--background-200);
+    --input-label: var(--text-900);
+    --bs-heading-color: var(--color);
 }
 .cta-form + footer {
     border-top-left-radius: 0;
@@ -169,25 +196,35 @@ footer {
     border-top-right-radius: 25px;
 }
 .cta-controls {
-    background-color: var(--background-700);
+    background-color: var(--background);
     position: relative;
     z-index: 1;
     padding: 1rem 1.5rem;
     border-radius: 25px;
-    color: var(--text-100);
+    color: var(--color)
 }
 .cta-controls .form-control {
-    background-color: var(--text-100);
-    color: var(--background-700);
+    background-color: var(--input-bg);
+    color: var(--input-label);
+    border-color: var(--input-bg);
+    border-top-left-radius: var(--rounded);
+    border-bottom-left-radius: var(--rounded);
+    padding-left: 2.75ch;
+}
+.cta-controls label {
+    color: var(--input-label);
+    padding-left: 3ch;
 }
 .cta-controls .btn {
-    background-color: var(--text-100);
-    color: var(--background-700);
-    border: 1px solid var(--text-100);
-
+    background-color: var(--input-bg);
+    color: var(--input-label);
+    border: 1px solid var(--input-bg);
+    border-top-right-radius: var(--rounded);
+    border-bottom-right-radius: var(--rounded);
+    padding-right: 3ch;
     &:hover {
-        background-color: var(--background-700);
-        color: var(--text-100);
+        background-color: var(--input-label);
+        color: var(--input-bg);
     }
 }
 
@@ -209,7 +246,10 @@ p {
         font-family: var(--young-serif);
     }
 }
-
+h1,h2,h3,h4,h5,
+.h1,.h2,.h3,.h4,.h5 {
+    font-family: var(--young-serif)
+}
 .nav-link {
     color: inherit;
 }
