@@ -1,0 +1,28 @@
+---
+import {Icon} from 'astro-icon/components';
+import type { HTMLAttributes, HTMLTag, Polymorphic } from 'astro/types';
+interface Props extends HTMLAttributes<'div'> {
+    level: 1|2|3|4|5|6;
+    name: string;
+    hClass?: string|string[];
+}
+const { name, level, hClass, ...props } = Astro.props;
+const Tag = `h${level}` as HTMLTag
+---
+<div {...props}>
+    <Icon name={name} class="title-icon" />
+    <Tag class:list={hClass}><slot /></Tag>
+</div>
+<style>
+    div {
+        display: flex;
+        align-items: center;
+        column-gap: 1ch;
+        > * {
+            margin: 0;
+        }
+    }
+    .title-icon {
+        font-size: 1.35em;
+    }
+</style>
