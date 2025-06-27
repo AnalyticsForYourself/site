@@ -5,10 +5,10 @@ import ModeToggle from '../components/ModeToggle.astro';
 import Font from 'astro/components/Font.astro';
 // import { SignInButton } from '@clerk/astro/components';
 const theme = Astro.cookies.get('theme') || Astro.cookies.set('theme', 'light') || { value: 'light' };
-const useDotBackground = Astro.url.pathname.indexOf('/dashboard') === -1
+const isLandingSite = Astro.url.pathname.indexOf('/dashboard') === -1
 ---
 <!doctype html>
-<html lang="en" data-theme={theme.value} class:list={[useDotBackground && 'dot-bg']}>
+<html lang="en" data-theme={theme.value} class:list={[isLandingSite && 'dot-bg']}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -32,7 +32,7 @@ const useDotBackground = Astro.url.pathname.indexOf('/dashboard') === -1
 		<main class="container-lg">
 			<slot />
 		</main>
-		<aside class="cta-form">
+		{isLandingSite && <aside class="cta-form">
 			<form class="container-lg">
 				<div class="row justify-content-center">
 					<div class="col-md-10 col-11">
@@ -52,7 +52,7 @@ const useDotBackground = Astro.url.pathname.indexOf('/dashboard') === -1
 					</div>
 				</div>
 			</form>
-		</aside>
+		</aside>}
 		<footer>
 			<div class="container-lg">
 				<div class="row py-5 justify-content-between align-items-center">
