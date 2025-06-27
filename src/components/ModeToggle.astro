@@ -1,6 +1,7 @@
 ---
 import {Icon} from 'astro-icon/components';
 const { value: theme } = Astro.cookies.get("theme")!;
+
 ---
 <theme-toggle current-theme={theme} id="themeToggle">
     {/* @ts-ignore: Add commands polyfill eventually */}
