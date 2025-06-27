@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Sparkline from './Sparkline.astro';
 export interface AnalyticsCardsProps {
     id: string;
@@ -28,7 +29,7 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
         <Sparkline class="spark-bookmarks" points={allRecords.bookmarks} />
         <Sparkline class="spark-comments" points={allRecords.comments} />
         <Sparkline class="spark-hits" points={allRecords.hits} />
-        <a href={`/dashboard/${userid}/${id}`}>View Analytics</a>
+        <a href={`/dashboard/${userid}/${id}`}><span>View Analytics</span> <Icon name="eva:arrow-forward-fill" /></a>
     </li>
 </work-card>
 <script>
@@ -50,6 +51,9 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
     });
 </script>
 <style>
+    work-card {
+        position: relative;
+    }
     ul {
         padding-left: 0;
         display: flex;
@@ -65,8 +69,34 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
         gap: 0.5ch;
         font-family: var(--bs-font-sans-serif);
     }
+    a {
+        font-family: var(--bs-font-sans-serif);
+        font-weight: 600;
+        display: flex;
+        column-gap: 0.5ch;
+        text-decoration: none;
+        align-items: center;
+        transition: all 0.25s ease 0.15s;
+        transition-property: column-gap, color;
+    }
+    a::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+    }
+    a:hover {
+        column-gap: 1ch;
+    }
     .spark-line-container:not(.active) {
         display: none;
+    }
+    .btn {
+        position: relative;
+        z-index: 10;
+    }
+    .btn:hover {
+        background-color: var(--background-100);
     }
     .btn.active {
         background-color: var(--background-50);
@@ -81,11 +111,16 @@ const truncatedTitle = title.split(' ').slice(0, 10).join(' ');
         flex-flow: column;
         gap: 1ch;
         border-radius: 4px;
+        transition: background-color 0.25s ease 0.15s;
         > * {
             margin: 0;
         }
         h2 {
             font-size: clamp(1.2rem, 1rem + 3cqi, 2rem);
         }
+    }
+
+    work-card:has(a:hover) .analytics-card {
+        background-color: var(--background-100);
     }
 </style>
