@@ -158,6 +158,7 @@ ul[class] {
     background-position: -20px -20px;
     transition: all 0.25s ease;
     transition-property: --dot-bg-color, --dot-size;
+    opacity: 0.5;
 }
 .dot-bg[data-theme="light"] body::after {
     --dot-size: 1.5px;
@@ -227,11 +228,15 @@ footer {
         color: var(--input-bg);
     }
 }
-
+.serif {
+    font-family: var(--young-serif);
+}
 .text-secondary {
     color: var(--secondary-900) !important;
 }
-
+a {
+    font-family: var(--bs-font-sans-serif);
+}
 button {
     background-color: var(--accent-200);
     padding: 0.5em 1em;
@@ -256,4 +261,10 @@ h1,h2,h3,h4,h5,
 }
 .nav-link {
     color: inherit;
+}
+.cl-modalContent {
+    font-family: var(--bs-font-sans-serif);
+    h1 {
+        font-family: var(--young-serif);
+    }
 }
