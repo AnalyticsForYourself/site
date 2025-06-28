@@ -139,6 +139,7 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
 <script is:inline id="chartData" type="application/json" set:html={data} />
 <script>
     import { Chart, registerables } from "chart.js";
+    // @ts-ignore: No types file, oh well
     import chartTrendline from "chartjs-plugin-trendline";
 
     Chart.register(...registerables);
