@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths, GetStaticPathsResult } from "astro";
 import Layout from "../../../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
 import { getEntry, getCollection } from "astro:content";
 import type { DataEntryMap } from "astro:content";
 
 export const prerender = false;
-
+/*
 export const getStaticPaths = (async () => {
     const users = await getCollection('users');
     const mappedPaths:GetStaticPathsResult = [];
@@ -22,19 +23,24 @@ export const getStaticPaths = (async () => {
 
     return mappedPaths;
 }) satisfies GetStaticPaths;
-
-const { user, id } = Astro.params as { user: string, id: string };
+*/
+const { user, id } = Astro.params as { user: string; id: string };
 const entry = await getEntry(user as keyof DataEntryMap, id);
 
-const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'short' });
+const formatter = new Intl.DateTimeFormat("en-US", { dateStyle: "short" });
 
-function parseData(dataArr: Record<string, string|number[]>) {
-    const potentialData: Record<string, (number|string)[]> = {
-        labels: []
+function parseData(dataArr: Record<string, string | number[]>) {
+    const potentialData: Record<string, (number | string)[]> = {
+        labels: [],
     };
 
     for (const [key, value] of Object.entries(dataArr.records)) {
-        if (key === 'timestamps') potentialData.labels.push(...(value as number[]).map(n => formatter.format(new Date(n))));
+        if (key === "timestamps")
+            potentialData.labels.push(
+                ...(value as number[]).map((n) =>
+                    formatter.format(new Date(n)),
+                ),
+            );
         else {
             potentialData[key] = (potentialData[key] || []).concat(value);
         }
@@ -43,37 +49,65 @@ function parseData(dataArr: Record<string, string|number[]>) {
 }
 const parsedData = parseData(entry?.data);
 const data = JSON.stringify(parsedData || {});
+const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
 ---
+
 <Layout>
-    <a href={`/dashboard/${user}`}>Return to overview</a>
+    <a href={`/dashboard/${user}`}
+        ><Icon class="fs-4" name="eva:arrow-back-fill" />
+        <span>Return to overview</span></a
+    >
     <h1>Analytics for {entry?.data.title}</h1>
-    {parsedData.kudos?.length < 5 && <h2>There aren't a lot of entries for this work, you might want to come back in a couple of days!</h2>}
+    {
+        parsedData.kudos?.length < 5 && (
+            <h2>
+                There aren't a lot of entries for this work, you might want to
+                come back in a couple of days!
+            </h2>
+        )
+    }
     <canvas id="ctx"></canvas>
     <fieldset>
         <legend>Controls</legend>
         <div class="fieldset">
             <div class="row gap-3">
-                {Object.keys(parsedData).map((key) => !['title','fandom','category','rating','warnings','labels','chapters','complete'].includes(key) &&
-                    // @ts-ignore
-                    <button command={'--change:'+key} commandfor="ctx">{key[0].toUpperCase() + key.slice(1)}</button>
-                )}
+                {
+                    stats.map((key) => (
+                        <button data-key={key}>
+                            {key[0].toUpperCase() + key.slice(1)}
+                        </button>
+                    ))
+                }
             </div>
             <div class="row">
                 <label for="limit">Number of Entries: </label>
                 <select id="limit" class="form-control">
                     <option>1</option>
-                    <option selected>5</option>
-                    <option>14</option>
-                    <option>30</option>
-                    <option>60</option>
-                    <option>150</option>
-                    <option>365</option>
+                    <option selected value="7">Last Week</option>
+                    <option value="14">Last 2 Weeks</option>
+                    <option value="30">Last Month</option>
+                    <option value="60">Last 2 Months</option>
+                    <option value="180">Last 6 Months</option>
+                    <option value="365">Last Year</option>
+                    <option value="*">All Time</option>
                 </select>
             </div>
         </div>
     </fieldset>
 </Layout>
 <style>
+    a {
+        display: flex;
+        column-gap: 0.25rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        transition-property: color, column-gap;
+        align-items: center;
+    }
+    a:hover {
+        column-gap: 0.5rem;
+    }
     legend {
         font-size: 1.25rem;
     }
@@ -102,49 +136,87 @@ const data = JSON.stringify(parsedData || {});
         color: var(--primary-50);
     }
 </style>
-<script id="chartData" type="application/json" set:html={data}></script>
+<script is:inline id="chartData" type="application/json" set:html={data} />
 <script>
-    import {Chart, registerables} from 'chart.js';
+    import { Chart, registerables } from "chart.js";
+    import chartTrendline from "chartjs-plugin-trendline";
+
     Chart.register(...registerables);
-    const ctx = document.getElementById('ctx')! as HTMLCanvasElement;
-    const data =JSON.parse(document.querySelector<HTMLScriptElement>('#chartData')?.innerHTML || '{}')
-    const limit = document.getElementById('limit')! as HTMLSelectElement;
-    let currentType = 'kudos';
-    
+    const ctx = document.getElementById("ctx")! as HTMLCanvasElement;
+    const data = JSON.parse(
+        document.querySelector<HTMLScriptElement>("#chartData")?.innerHTML ||
+            "{}",
+    );
+    const limit = document.getElementById("limit")! as HTMLSelectElement;
+    let currentType = "kudos";
+
     const limitData = (data: number[]) => {
+        if (limit.value === "*") return data;
         const numLimit = parseInt(limit.value, 10);
+
         return data.slice(-numLimit);
+    };
+
+    function addTrendline() {
+        return {
+            trendlineLinear: {
+                style: "rgb(43 ,66 ,255, 0.3)",
+                lineStyle: "dotted|solid",
+                width: 2,
+            },
+        }
     }
 
     const chart = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
             labels: data.labels,
-            datasets: [{
-                label: 'Kudos',
-                data: limitData(data.kudos)
-            }]
-        }
-    })
-
+            datasets: [
+                {
+                    label: "Kudos",
+                    data: limitData(data.kudos),
+                    ...addTrendline()
+                },
+            ],
+        },
+        plugins: [chartTrendline],
+    });
 
     // @ts-ignore
-    ctx.addEventListener('command', ({ command, source }) => {
-        const type = command.split(':')[1];
-        currentType = type;
-        chart.data.datasets = [
-            { label: source.textContent, data: limitData(data[type]) }
-        ]
-        chart.update();
-        document.querySelectorAll('button').forEach(el => el.removeAttribute('data-active'));
-        source.dataset.active = true;
+    document.addEventListener(
+        "click",
+        (event) => {
+            const target = (event.target as HTMLElement).closest(
+                "[data-key]",
+            ) as HTMLButtonElement;
 
-    })
-    limit.addEventListener('change', () => {
+            if (!target) return;
+
+            const type = target.dataset.key!;
+            currentType = type;
+            console.log({ data, type, item: data[type] });
+            chart.data.datasets = [
+                { label: target.textContent!, data: limitData(data[type]), ...addTrendline() },
+            ];
+            chart.update();
+            document
+                .querySelectorAll("button")
+                .forEach((el) => el.removeAttribute("data-active"));
+            target.dataset.active = "true";
+        },
+        true,
+    );
+
+    limit.addEventListener("change", () => {
         chart.data.labels = limitData(data.labels);
         chart.data.datasets = [
-            { label: document.querySelector('[command*=":'+currentType+'"]')!.textContent!, data: limitData(data[currentType]) }
-        ]
+            {
+                label: document.querySelector(`[data-key="${currentType}"]`)!
+                    .textContent!,
+                data: limitData(data[currentType]),
+                ...addTrendline()
+            },
+        ];
         chart.update();
-    })
+    });
 </script>
