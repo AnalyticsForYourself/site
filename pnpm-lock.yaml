@@ -29,6 +29,12 @@ importers:
       chart.js:
         specifier: ^4.5.0
         version: 4.5.0
+      chartjs-plugin-trendline:
+        specifier: ^2.1.9
+        version: 2.1.9
+      invokers-polyfill:
+        specifier: ^0.5.5
+        version: 0.5.5
 
 packages:
 
@@ -912,6 +918,9 @@ packages:
     resolution: {integrity: sha512-aYeC/jDgSEx8SHWZvANYMioYMZ2KX02W6f6uVfyteuCGcadDLcYVHdfdygsTQkQ4TKn5lghoojAsPj5pu0SnvQ==}
     engines: {pnpm: '>=8'}
 
+  chartjs-plugin-trendline@2.1.9:
+    resolution: {integrity: sha512-6vzl7o2mytprS71yYCn91SZHbq5K8QnMGixz3SORemoAxPwJVTYK8J2ViQ44Hkxf6ld5/GwOtL0eU5k8IywocA==}
+
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
 
@@ -1578,6 +1587,9 @@ packages:
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
+
+  invokers-polyfill@0.5.5:
+    resolution: {integrity: sha512-78dqWtGBnpHGfCOXOVycJC4Ry2faxIlUWt/Qil7nosaEHg1vcmamwFEdN/1g/ldPp5XaRrRuRLTya7SQF36AwQ==}
 
   iron-webcrypto@1.2.1:
     resolution: {integrity: sha512-feOM6FaSr6rEABp/eDfVseKyTMDt+KGpeB35SkVn9Tyn0CqvVsY3EwI0v5i8nMHyJnzCIQf7nsy3p41TPkJZhg==}
@@ -3961,6 +3973,8 @@ snapshots:
     dependencies:
       '@kurkle/color': 0.3.4
 
+  chartjs-plugin-trendline@2.1.9: {}
+
   cheerio-select@2.1.0:
     dependencies:
       boolbase: 1.0.0
@@ -4705,6 +4719,8 @@ snapshots:
   index-to-position@1.1.0: {}
 
   inherits@2.0.4: {}
+
+  invokers-polyfill@0.5.5: {}
 
   iron-webcrypto@1.2.1: {}
 
