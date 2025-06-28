@@ -11,15 +11,16 @@ interface Props extends HTMLAttributes<'div'> {
 }
 
 const { points, width = 200, height = 30, gap = 5, strokeWidth = 2, color = 'var(--accent-200)', ...props } = Astro.props;
-const maxValue = Math.max(...points);
+// Add 1 to each point for a bit of padding when there are 0's in the array
+const maxValue = Math.max(...points.map(point => point + 1));
 const spacing = width / points.length - 1;
 const coords = points.map((point:number, idx:number) => {
 
     if (maxValue === 0 || idx === 0) return `0,0`;
+    
     const maxHeight = (point / maxValue) * height;
     const x = idx * spacing;
     const y = height - maxHeight;
-    console.log({ x, y, height, maxHeight, width, spacing, maxValue, point, idx });
     return `${x},${y}`;
 });
 props.class += ' spark-line-container';
