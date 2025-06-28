@@ -60,6 +60,7 @@ const formatter = Intl.NumberFormat('en-US');
             height: 100%;
             display: grid;
             grid-template-columns: 1fr;
+            row-gap: 0.25rem;
             grid-template-rows: max-content;
             a {
                 align-self: end;
@@ -126,17 +127,17 @@ const formatter = Intl.NumberFormat('en-US');
         container-type: inline-size;
         background-color: #fff;
         border-color: 1px solid var(--primary);
-        padding: 1em 1.5em;
+        padding: 1rem 1.5rem;
         display: flex;
         flex-flow: column;
-        gap: 1ch;
-        border-radius: 4px;
+        gap: 0.25rem;
+        border-radius: 0.55rem;
         transition: background-color 0.25s ease 0.15s;
         > * {
             margin: 0;
         }
         h2 {
-            font-size: clamp(1.2rem, 1rem + 2.5cqi, 2rem);
+            font-size: clamp(1.25rem, 1rem + 2.5cqi, 2rem);
         }
     }
 
