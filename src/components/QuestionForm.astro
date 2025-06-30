@@ -1,0 +1,18 @@
+---
+import IconTitle from "./IconTitle.astro"
+---
+<form action="" method="POST">
+    <IconTitle as="label" hClass="h3" name="eva:question-mark-outline">Still have questions we didn't answer above?</IconTitle>
+    <label for="question">Still have questions we didn't answer above?</label>
+    <textarea class="form-control" name="question" id="question"></textarea>
+    <button class="btn btn-primary" type="submit">Submit Question</button>
+</form>
+<style>
+    form {
+        background-color: var(--background-800);
+        padding: 1rem;
+        color: var(--text-100);
+        --bs-heading-color: var(--text-50);
+        border-radius: 1.5rem;
+    }
+</style>
