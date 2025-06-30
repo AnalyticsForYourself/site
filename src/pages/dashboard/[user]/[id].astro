@@ -1,29 +1,11 @@
 ---
-import type { GetStaticPaths, GetStaticPathsResult } from "astro";
 import Layout from "../../../layouts/Layout.astro";
 import { Icon } from "astro-icon/components";
-import { getEntry, getCollection } from "astro:content";
+import { getEntry } from "astro:content";
 import type { DataEntryMap } from "astro:content";
 
 export const prerender = false;
-/*
-export const getStaticPaths = (async () => {
-    const users = await getCollection('users');
-    const mappedPaths:GetStaticPathsResult = [];
 
-    for (const { id } of users) {
-        const userid = id;
-        const collection = await getCollection(userid as keyof DataEntryMap);
-        collection.forEach(({ id }) => {
-            mappedPaths.push({
-                params: { user: userid, id }
-            })
-        })
-    }
-
-    return mappedPaths;
-}) satisfies GetStaticPaths;
-*/
 const { user, id } = Astro.params as { user: string; id: string };
 const entry = await getEntry(user as keyof DataEntryMap, id);
 
@@ -47,6 +29,7 @@ function parseData(dataArr: Record<string, string | number[]>) {
     }
     return potentialData;
 }
+
 const parsedData = parseData(entry?.data);
 const data = JSON.stringify(parsedData || {});
 const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
@@ -60,10 +43,13 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
     <h1>Analytics for {entry?.data.title}</h1>
     {
         parsedData.kudos?.length < 5 && (
-            <h2>
-                There aren't a lot of entries for this work, you might want to
-                come back in a couple of days!
-            </h2>
+            <div class="alert alert-warning w-max-content">
+                <h2 class="font-sans h4">
+                    There aren't a lot of entries for this work, you might want to
+                    come back in a couple of days!
+                    <a href="/learnmore">Learn More</a>
+                </h2>
+            </div>
         )
     }
     <canvas id="ctx"></canvas>
@@ -71,6 +57,9 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
         <legend>Controls</legend>
         <div class="fieldset">
             <div class="row gap-3">
+                <button data-key="line">
+                    Overview
+                </button>
                 {
                     stats.map((key) => (
                         <button data-key={key}>
@@ -94,6 +83,7 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
             </div>
         </div>
     </fieldset>
+    <canvas id="overview"></canvas>
 </Layout>
 <style>
     a {
@@ -168,20 +158,130 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
         }
     }
 
+    function makeYScale() {
+        return {
+            type: 'linear',
+            position: 'left',
+            get suggestedMax():number {
+                const max = Math.max(...limitData(data[currentType]))
+                console.log({max});
+                return max + 10;
+            },
+            get suggestedMin():number {
+                const min = Math.min(...limitData(data[currentType]));
+                console.log({ min });
+                return Math.max(min - 10, 0);
+            }
+        }
+    }
+
     const chart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: data.labels,
             datasets: [
                 {
-                    label: "Kudos",
-                    data: limitData(data.kudos),
+                    get label() {
+                        return currentType[0].toUpperCase() + currentType.slice(1);
+                    },
+                    get data() {
+                        return limitData(data[currentType]);
+                    },
+                    yAxisID: 'y',
                     ...addTrendline()
-                },
-            ],
+                }
+            ]
+        },
+        options: {
+            scales: {
+                // @ts-ignore
+                y: {
+                    ...makeYScale(),
+                }
+            }
         },
         plugins: [chartTrendline],
     });
+
+    function getDataScales() {
+        const scales:Record<string, Record<string, string|number|boolean|Record<string, boolean>>> = {};
+        for (const [key, value] of Object.entries<number[]>(data)) {
+            if (key === 'labels') continue;
+            scales[key] = {
+                type: 'linear',
+                suggestedMin: Math.max(Math.min(...value) - 10, 0),
+                suggestedMax: Math.max(...value) + 10,
+                display: ['kudos','hits'].includes(key),
+                position: key === 'kudos' ? 'right' : key === 'hits' ? 'left' : false,
+                grid: {
+                    drawOnChart: ['kudos','hits'].includes(key)
+                }
+            }
+        }
+        return scales;
+    }
+
+    const overview = new Chart(document.getElementById('overview') as HTMLCanvasElement, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'Kudos',
+                    yAxisID: 'kudos',
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                },
+                {
+                    label: 'Hits',
+                    yAxisID: 'hits',
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                },
+                {
+                    label: 'Comments',
+                    yAxisID: 'comments',
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                },
+                {
+                    yAxisID: 'bookmarks',
+                    label: "Bookmarks",
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                },
+                {
+                    label: "Chapters",
+                    yAxisID: 'chapters',
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                },
+                {
+                    label: "Words",
+                    yAxisID: 'words',
+                    get data() {
+                        const { yAxisID } = this as { yAxisID: string };
+                        return limitData(data[yAxisID]);
+                    }
+                }
+            ]
+        },
+        options: {
+            scales: {
+                ...getDataScales()
+            }
+        }
+    })
 
     // @ts-ignore
     document.addEventListener(
@@ -195,10 +295,9 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
 
             const type = target.dataset.key!;
             currentType = type;
-            console.log({ data, type, item: data[type] });
-            chart.data.datasets = [
-                { label: target.textContent!, data: limitData(data[type]), ...addTrendline() },
-            ];
+            
+            // @ts-ignore
+            chart.options.scales.y = makeYScale()
             chart.update();
             document
                 .querySelectorAll("button")
@@ -210,14 +309,7 @@ const stats = ["kudos", "hits", "comments", "bookmarks", "chapters", "words"];
 
     limit.addEventListener("change", () => {
         chart.data.labels = limitData(data.labels);
-        chart.data.datasets = [
-            {
-                label: document.querySelector(`[data-key="${currentType}"]`)!
-                    .textContent!,
-                data: limitData(data[currentType]),
-                ...addTrendline()
-            },
-        ];
         chart.update();
+        overview.update();
     });
 </script>
