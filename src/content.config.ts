@@ -1,4 +1,4 @@
-import type { Loader } from "astro/loaders";
+import { glob, type Loader } from "astro/loaders";
 import { defineCollection, z } from "astro:content";
 
 
@@ -119,11 +119,13 @@ async function loadUsersIntoContentLayer() {
 }
 
 const collections = {
-    /*
-    analytics: defineCollection({
-        loader: loader()
+    faq: defineCollection({
+        loader: glob({ base: './src/content/faqs/', pattern: '*.json'}),
+        schema: z.array(z.object({
+            q: z.string(),
+            a: z.string()
+        }))
     }),
-    */
     users: defineCollection({
         loader: {
             name: 'deno-user-loader',
