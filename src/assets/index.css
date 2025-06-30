@@ -228,8 +228,16 @@ footer {
         color: var(--input-bg);
     }
 }
-.serif {
-    font-family: var(--young-serif);
+.w-max-content {
+    width: max-content !important;
+}
+.serif,
+.font-serif {
+    font-family: var(--young-serif) !important;
+}
+.sans,
+.font-sans {
+    font-family: var(--bs-font-sans-serif) !important;
 }
 .text-secondary {
     color: var(--secondary-900) !important;
