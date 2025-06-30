@@ -48,7 +48,7 @@ const isLandingSite = Astro.url.pathname.indexOf('/dashboard') === -1
 								<div class="input-group">
 									<div class="form-floating">
 										<input type="email" class="form-control" id="email" name="email" placeholder=" " />
-										<label for="email">Email</label>
+										<label for="email">Your Email Address</label>
 									</div>
 									<button class="btn">Reach Out</button>
 								</div>
@@ -95,12 +95,3 @@ const isLandingSite = Astro.url.pathname.indexOf('/dashboard') === -1
 		padding: 0;
 	}
 </style>
-<script>
-	if (!!document.querySelector('[command]')) {
-		const { isSupported, isPolyfilled, apply } = await import('invokers-polyfill/fn');
-		if (!isSupported() && !isPolyfilled()) {
-			console.log('Applying polyfill');
-			apply();
-		}
-	}
-</script>
