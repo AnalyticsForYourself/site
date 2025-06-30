@@ -1,0 +1,14 @@
+[
+    {
+        "q":"How can I see who is subscribed to me?",
+        "a":"We only have access to the data AO3 shares. Since they hide the names of the users subscribed to you, we are unable to show them to you."
+    },
+    {
+        "q":"Can I see who has given my works the most kudos? How can I collate data about who adds kudos to my works?",
+        "a":"It is unlikely that we will add support for this feature. We believe people should be able to add kudos to works without the fear that someone is secretly tracking their activity on AO3."
+    },
+    {
+        "q":"What about another data point?",
+        "a":"If you are looking for derived data points, such as a kudos to hits ratio or a words per chapter average, those are not currently provided. We are looking into them as an additional feature in the future."
+    }
+]

@@ -1,0 +1,14 @@
+[
+    {
+        "q":"How do I see how many kudos I had on a specific date?",
+        "a":"This is not currently supported, but we are looking into it. If you'd like to see dates in the past, you can select the 'All Entries' option from the 'Number of Entries' dropdown."
+    },
+    {
+        "q":"What if the date is before I signed up for AnalyticsForYourself?",
+        "a":"Because of how AFY gets and stores analytics, we only get it for works that we know about. This means that data points from before you signed up are not available."
+    },
+    {
+        "q":"Can I add those data values if I have them stored a different way?",
+        "a":"Currently this is not possible. If there is interest in an import feature, we may look into adding support, but we are a small team!"
+    }
+]

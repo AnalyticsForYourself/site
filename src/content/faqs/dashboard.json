@@ -1,0 +1,18 @@
+[
+    {
+        "q":"How can I sort my works?",
+        "a":"Sorting is being worked on! We are hoping to have a simple way to sort by high/low of specific stats, as well as most/least recent, last updated, etc."
+    },
+    {
+        "q":"What is this small line on the card?",
+        "a":"That is called a 'sparkline'. The goal is to show in a brief info graph what is happening with your fics."
+    },
+    {
+        "q":"Why is the line flat?",
+        "a":"The sparkline will appear flat if your work doesn't get a lot of interaction. As you add chapters to a work, you'll see that the line will grow more erratic."
+    },
+    {
+        "q":"Why can't I see...?",
+        "a":"If there is a stat you'd like to see on the dashboard, reach out to us and we can see how difficult it would be to implement."
+    }
+]
